@@ -3,6 +3,7 @@ package controller
 import (
 	"api/data"
 	"github.com/gin-gonic/gin"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -82,6 +83,16 @@ func StatusSummary(c *gin.Context) {
 			"total":  count,
 		})
 	}
+
+	sort.Slice(summary, func(i, j int) bool {
+		order := map[string]int{
+			"Complete":      0,
+			"To Review":     1,
+			"Pending LM/CC": 2,
+			"Missing":       3,
+		}
+		return order[summary[i]["status"].(string)] < order[summary[j]["status"].(string)]
+	})
 
 	totalFeedbacks := len(data.Feedbacks)
 

@@ -17,7 +17,7 @@ func GenerateFeedbacks(quantity int) []model.Feedbacks {
 			ID:                   fmt.Sprintf("%d", i),
 			Name:                 fmt.Sprintf("Employee %d", i),
 			LineManager:          getRandomManager(),
-			CareerCoach:          fmt.Sprintf("Coach %d", i),
+			CareerCoach:          getRandomCoach(),
 			LineManagerDone:      getRandomDone(),
 			CareerCoachDone:      getRandomDone(),
 			Authorized:           fmt.Sprintf("Authorized %d", i),
@@ -125,4 +125,30 @@ func getRandomManager() string {
 	)
 	manager := chooser.Pick().(string)
 	return manager
+}
+
+func getRandomCoach() string {
+	chooser, _ := weightRand.NewChooser(
+		weightRand.Choice{Item: "Sophia", Weight: 2},
+		weightRand.Choice{Item: "Liam", Weight: 2},
+		weightRand.Choice{Item: "Isabella", Weight: 2},
+		weightRand.Choice{Item: "Noah", Weight: 2},
+		weightRand.Choice{Item: "Emma", Weight: 2},
+		weightRand.Choice{Item: "Jackson", Weight: 2},
+		weightRand.Choice{Item: "Ava", Weight: 2},
+		weightRand.Choice{Item: "Lucas", Weight: 2},
+		weightRand.Choice{Item: "Mia", Weight: 2},
+		weightRand.Choice{Item: "Elijah", Weight: 2},
+		weightRand.Choice{Item: "Charlotte", Weight: 2},
+		weightRand.Choice{Item: "Carter", Weight: 2},
+		weightRand.Choice{Item: "Amelia", Weight: 2},
+		weightRand.Choice{Item: "Olivia", Weight: 2},
+		weightRand.Choice{Item: "Benjamin", Weight: 2},
+		weightRand.Choice{Item: "Harper", Weight: 2},
+		weightRand.Choice{Item: "Alexander", Weight: 2},
+		weightRand.Choice{Item: "Avery", Weight: 2},
+		weightRand.Choice{Item: "Ethan", Weight: 2},
+	)
+	coach := chooser.Pick().(string)
+	return coach
 }
