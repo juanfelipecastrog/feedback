@@ -8,6 +8,10 @@ import (
 )
 
 func ShowFeedbacks(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length")
+	c.Header("Access-Control-Expose-Headers", "Content-Length")
 	discipline := strings.ToLower(c.Query("discipline"))
 	period := strings.ToLower(c.Query("period"))
 	status := strings.ToLower(c.Query("status"))
@@ -51,12 +55,20 @@ func ShowFeedbacks(c *gin.Context) {
 }
 
 func HealthCheck(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length")
+	c.Header("Access-Control-Expose-Headers", "Content-Length")
 	c.JSON(200, gin.H{
 		"status": "OK",
 	})
 }
 
 func StatusSummary(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length")
+	c.Header("Access-Control-Expose-Headers", "Content-Length")
 	statusCounts := make(map[string]int)
 
 	for _, f := range data.Feedbacks {

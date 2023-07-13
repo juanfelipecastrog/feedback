@@ -13,7 +13,6 @@ func init() {
 
 func main() {
 	r := gin.Default()
-	// Configurar CORS
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
