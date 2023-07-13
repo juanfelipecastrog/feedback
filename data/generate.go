@@ -18,6 +18,8 @@ func GenerateFeedbacks(quantity int) []model.Feedbacks {
 			Name:                 fmt.Sprintf("Employee %d", i),
 			LineManager:          getRandomManager(),
 			CareerCoach:          fmt.Sprintf("Coach %d", i),
+			LineManagerDone:      getRandomDone(),
+			CareerCoachDone:      getRandomDone(),
 			Authorized:           fmt.Sprintf("Authorized %d", i),
 			CompensationReviewer: fmt.Sprintf("Reviewer %d", i),
 			Comments:             fmt.Sprintf("Feedback %d", i),
@@ -40,6 +42,15 @@ func getRandomStatus() string {
 	)
 	status := chooser.Pick().(string)
 	return status
+}
+
+func getRandomDone() string {
+	chooser, _ := weightRand.NewChooser(
+		weightRand.Choice{Item: "Complete", Weight: 6},
+		weightRand.Choice{Item: "Pending LM/CC", Weight: 4},
+	)
+	done := chooser.Pick().(string)
+	return done
 }
 
 func getRandomPeriod() string {

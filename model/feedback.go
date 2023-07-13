@@ -12,6 +12,8 @@ type Feedbacks struct {
 	Name                 string `json:"name"`
 	LineManager          string `json:"line_manager"`
 	CareerCoach          string `json:"career_coach"`
+	LineManagerDone      string `json:"line_manager_done"`
+	CareerCoachDone      string `json:"career_coach_done"`
 	Authorized           string `json:"authorized"`
 	CompensationReviewer string `json:"compensation_reviewer"`
 	Comments             string `json:"comments"`
