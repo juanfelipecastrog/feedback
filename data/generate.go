@@ -3,6 +3,7 @@ package data
 import (
 	"api/model"
 	"fmt"
+	weightRand "github.com/mroth/weightedrand"
 	"math/rand"
 	"time"
 )
@@ -31,20 +32,25 @@ func GenerateFeedbacks(quantity int) []model.Feedbacks {
 }
 
 func getRandomStatus() string {
-	statuses := []string{"Complete", "Pending LM/CC", "To Review", "Missing"}
-	rand.Seed(time.Now().UnixNano())
-	return statuses[rand.Intn(len(statuses))]
+	chooser, _ := weightRand.NewChooser(
+		weightRand.Choice{Item: "Complete", Weight: 2},
+		weightRand.Choice{Item: "Pending LM/CC", Weight: 4},
+		weightRand.Choice{Item: "To Review", Weight: 6},
+		weightRand.Choice{Item: "Missing", Weight: 7},
+	)
+	status := chooser.Pick().(string)
+	return status
 }
 
 func getRandomPeriod() string {
 	quarters := []string{"H1 FY2023", "H2 FY2023", "H2 FY2022", "H1 FY2022"}
-	rand.Seed(time.Now().UnixNano())
-	quarter := quarters[rand.Intn(len(quarters))]
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	quarter := quarters[r.Intn(len(quarters))]
 	return quarter
 }
 
 func getRandomDiscipline() string {
 	disciplines := []string{"Development", "AM", "Testing", "Creative", "Facilities"}
-	rand.Seed(time.Now().UnixNano())
-	return disciplines[rand.Intn(len(disciplines))]
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	return disciplines[r.Intn(len(disciplines))]
 }
