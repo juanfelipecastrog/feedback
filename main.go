@@ -21,8 +21,8 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	r.GET("/health-check/", controller.HealthCheck)
-	r.GET("/feedback/", controller.ShowFeedbacks)
-	r.GET("/status/", controller.StatusSummary)
+	r.GET("/health-check", controller.HealthCheck)
+	r.GET("/feedback", controller.ShowFeedbacks)
+	r.GET("/status", controller.StatusSummary)
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
