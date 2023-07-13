@@ -46,8 +46,8 @@ func getRandomStatus() string {
 
 func getRandomDone() string {
 	chooser, _ := weightRand.NewChooser(
-		weightRand.Choice{Item: "Complete", Weight: 6},
-		weightRand.Choice{Item: "Pending LM/CC", Weight: 4},
+		weightRand.Choice{Item: "True", Weight: 6},
+		weightRand.Choice{Item: "False", Weight: 4},
 	)
 	done := chooser.Pick().(string)
 	return done
