@@ -4,7 +4,6 @@ import (
 	"api/data"
 	"api/model"
 	"github.com/gin-gonic/gin"
-	"math"
 	"net/http"
 	"net/url"
 	"sort"
@@ -22,6 +21,13 @@ func ShowFeedbacks(c *gin.Context) {
 	status := strings.ToLower(c.Query("status"))
 	limitStr := c.DefaultQuery("limit", "10")
 	offsetStr := c.Query("offset")
+	search := c.Query("search")
+	searchQuery, err := url.QueryUnescape(search)
+
+	if err != nil {
+		// Manejar el error de decodificación de la consulta de búsqueda
+		// y devolver una respuesta apropiada o realizar una acción adecuada.
+	}
 
 	limit, err := strconv.Atoi(limitStr)
 	if err != nil || limit <= 0 {
@@ -35,16 +41,20 @@ func ShowFeedbacks(c *gin.Context) {
 
 	filteredFeedbacks := data.Feedbacks
 
+	if searchQuery != "" {
+		filteredFeedbacks = searchFeedbacks(filteredFeedbacks, strings.ToLower(searchQuery))
+	}
+
 	if discipline != "" {
 		filteredFeedbacks = filterByDiscipline(filteredFeedbacks, discipline)
 	}
 
-	if period != "" {
-		filteredFeedbacks = filterByPeriod(filteredFeedbacks, period)
-	}
-
 	if status != "" {
 		filteredFeedbacks = filterByStatus(filteredFeedbacks, status)
+	}
+
+	if period != "" {
+		filteredFeedbacks = filterByPeriod(filteredFeedbacks, period)
 	}
 
 	paginatedFeedbacks := paginateFeedbacks(filteredFeedbacks, limit, offset)
@@ -55,6 +65,17 @@ func ShowFeedbacks(c *gin.Context) {
 		"limit":     len(paginatedFeedbacks),
 		"total":     len(filteredFeedbacks),
 	})
+}
+
+func searchFeedbacks(feedbacks []model.Feedbacks, query string) []model.Feedbacks {
+	var results []model.Feedbacks
+	searchQuery := strings.ReplaceAll(query, "+", " ")
+	for _, feedback := range feedbacks {
+		if strings.Contains(strings.ToLower(feedback.Name), searchQuery) {
+			results = append(results, feedback)
+		}
+	}
+	return results
 }
 
 func HealthCheck(c *gin.Context) {
@@ -127,71 +148,6 @@ func SelectOptions(c *gin.Context) {
 	c.JSON(http.StatusOK, options)
 }
 
-func Search(c *gin.Context) {
-	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
-	c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length")
-	c.Header("Access-Control-Expose-Headers", "Content-Length")
-	escapedName := c.Query("q")
-	name, err := url.QueryUnescape(escapedName)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid 'q' parameter",
-		})
-		return
-	}
-
-	if name == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Missing 'q' parameter",
-		})
-		return
-	}
-
-	name = strings.ReplaceAll(name, "+", " ")
-
-	pageStr := c.Query("page")
-	page, _ := strconv.Atoi(pageStr)
-	if page <= 0 {
-		page = 1
-	}
-	limit := 10
-
-	var matches []model.Feedbacks
-
-	for _, feedback := range data.Feedbacks {
-		if strings.Contains(strings.ToLower(feedback.Name), strings.ToLower(name)) {
-			matches = append(matches, feedback)
-		}
-	}
-
-	totalResults := len(matches)
-	totalPages := int(math.Ceil(float64(totalResults) / float64(limit)))
-
-	if page > totalPages {
-		page = totalPages
-	}
-
-	var results []model.Feedbacks
-	if len(matches) > 0 {
-		startIndex := (page - 1) * limit
-		endIndex := int(math.Min(float64(page*limit), float64(totalResults)))
-		results = matches[startIndex:endIndex]
-	}
-
-	response := gin.H{
-		"search": gin.H{
-			"totalResults": totalResults,
-			"currentPage":  page,
-			"pageSize":     limit,
-			"totalPages":   totalPages,
-			"results":      results,
-		},
-	}
-
-	c.JSON(http.StatusOK, response)
-}
-
 func UpdateComment(c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
@@ -225,7 +181,18 @@ func UpdateComment(c *gin.Context) {
 		feedback.Comments = update.Comment
 	}
 
+	validStatus := map[string]bool{
+		"Complete":      true,
+		"Pending LM/CC": true,
+		"To Review":     true,
+		"Missing":       true,
+	}
+
 	if update.Status != "" {
+		if !validStatus[update.Status] {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Invalid status"})
+			return
+		}
 		feedback.Status = update.Status
 	}
 
