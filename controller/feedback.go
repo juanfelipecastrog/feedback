@@ -24,11 +24,6 @@ func ShowFeedbacks(c *gin.Context) {
 	search := c.Query("search")
 	searchQuery, err := url.QueryUnescape(search)
 
-	if err != nil {
-		// Manejar el error de decodificación de la consulta de búsqueda
-		// y devolver una respuesta apropiada o realizar una acción adecuada.
-	}
-
 	limit, err := strconv.Atoi(limitStr)
 	if err != nil || limit <= 0 {
 		limit = 10
