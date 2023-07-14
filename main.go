@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	data.Feedbacks = data.GenerateFeedbacks(5000)
+	data.Feedbacks = data.GenerateFeedbacks(8200)
 }
 
 func main() {
@@ -24,5 +24,6 @@ func main() {
 	r.GET("/health-check", controller.HealthCheck)
 	r.GET("/feedback", controller.ShowFeedbacks)
 	r.GET("/status", controller.StatusSummary)
+	r.GET("/selectors", controller.SelectOptions)
 	r.Run() // listen and serve on 0.0.0.0:8080
 }

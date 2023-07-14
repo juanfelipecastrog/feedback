@@ -3,6 +3,7 @@ package controller
 import (
 	"api/data"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"sort"
 	"strconv"
 	"strings"
@@ -45,8 +46,6 @@ func ShowFeedbacks(c *gin.Context) {
 
 	paginatedFeedbacks := paginateFeedbacks(filteredFeedbacks, limit, offset)
 
-	// Return response
-	// return it
 	c.JSON(200, gin.H{
 		"feedbacks": paginatedFeedbacks,
 		"offset":    offset,
@@ -102,4 +101,22 @@ func StatusSummary(c *gin.Context) {
 	}
 
 	c.JSON(200, response)
+}
+
+func SelectOptions(c *gin.Context) {
+	options := make(map[string][]string)
+	options["disciplines"] = []string{
+		"Analysis",
+		"Application Management",
+		"Business Platform",
+		"Development",
+		"Data",
+		"Project Delivery Management",
+		"Testing",
+	}
+	options["status"] = []string{"Complete", "Pending LM/CC", "To Review", "Missing"}
+	options["periods"] = []string{"H1 FY2023", "H2 FY2023", "H2 FY2022", "H1 FY2022"}
+
+	c.JSON(http.StatusOK, options)
+
 }

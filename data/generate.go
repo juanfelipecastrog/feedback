@@ -10,9 +10,9 @@ import (
 
 var Feedbacks []model.Feedbacks
 
-func GenerateFeedbacks(quantity int) []model.Feedbacks {
+func GenerateFeedbacks(employees int) []model.Feedbacks {
 
-	for i := 1; i <= quantity; i++ {
+	for i := 1; i <= employees; i++ {
 		feedback := model.Feedbacks{
 			ID:                   fmt.Sprintf("%d", i),
 			Name:                 fmt.Sprintf("Employee %d", i),
