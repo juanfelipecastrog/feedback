@@ -26,6 +26,6 @@ func main() {
 	r.GET("/status", controller.StatusSummary)
 	r.GET("/selectors", controller.SelectOptions)
 	r.GET("/search", controller.Search)
-	r.PUT("/feedback/:id", controller.UpdateComment)
+	r.PATCH("/feedback/:id", controller.UpdateComment)
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
