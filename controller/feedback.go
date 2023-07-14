@@ -200,7 +200,7 @@ func UpdateComment(c *gin.Context) {
 	id := c.Param("id")
 
 	var update struct {
-		Comment string `json:"comment"`
+		Comment string `json:"comments"`
 		Status  string `json:"status"`
 	}
 	if err := c.ShouldBindJSON(&update); err != nil {
