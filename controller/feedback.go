@@ -2,8 +2,11 @@ package controller
 
 import (
 	"api/data"
+	"api/model"
 	"github.com/gin-gonic/gin"
+	"math"
 	"net/http"
+	"net/url"
 	"sort"
 	"strconv"
 	"strings"
@@ -118,5 +121,101 @@ func SelectOptions(c *gin.Context) {
 	options["periods"] = []string{"H1 FY2023", "H2 FY2023", "H2 FY2022", "H1 FY2022"}
 
 	c.JSON(http.StatusOK, options)
+}
 
+func Search(c *gin.Context) {
+	escapedName := c.Query("q")
+	name, err := url.QueryUnescape(escapedName)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid 'q' parameter",
+		})
+		return
+	}
+
+	if name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Missing 'q' parameter",
+		})
+		return
+	}
+
+	name = strings.ReplaceAll(name, "+", " ")
+
+	pageStr := c.Query("page")
+	page, _ := strconv.Atoi(pageStr)
+	if page <= 0 {
+		page = 1
+	}
+	limit := 10
+
+	var matches []model.Feedbacks
+
+	for _, feedback := range data.Feedbacks {
+		if strings.Contains(strings.ToLower(feedback.Name), strings.ToLower(name)) {
+			matches = append(matches, feedback)
+		}
+	}
+
+	totalResults := len(matches)
+	totalPages := int(math.Ceil(float64(totalResults) / float64(limit)))
+
+	if page > totalPages {
+		page = totalPages
+	}
+
+	var results []model.Feedbacks
+	if len(matches) > 0 {
+		startIndex := (page - 1) * limit
+		endIndex := int(math.Min(float64(page*limit), float64(totalResults)))
+		results = matches[startIndex:endIndex]
+	}
+
+	response := gin.H{
+		"search": gin.H{
+			"totalResults": totalResults,
+			"currentPage":  page,
+			"pageSize":     limit,
+			"totalPages":   totalPages,
+			"results":      results,
+		},
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func UpdateComment(c *gin.Context) {
+	id := c.Param("id")
+
+	var update struct {
+		Comment string `json:"comment"`
+		Status  string `json:"status"`
+	}
+	if err := c.ShouldBindJSON(&update); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	var feedback *model.Feedbacks
+	for i, fb := range data.Feedbacks {
+		if fb.ID == id {
+			feedback = &data.Feedbacks[i]
+			break
+		}
+	}
+
+	if feedback == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "ID not found"})
+		return
+	}
+
+	if update.Comment != "" {
+		feedback.Comments = update.Comment
+	}
+
+	if update.Status != "" {
+		feedback.Status = update.Status
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Feedback updated", "data": feedback})
 }
