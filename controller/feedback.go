@@ -107,6 +107,10 @@ func StatusSummary(c *gin.Context) {
 }
 
 func SelectOptions(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
+	c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length")
+	c.Header("Access-Control-Expose-Headers", "Content-Length")
 	options := make(map[string][]string)
 	options["disciplines"] = []string{
 		"Analysis",
@@ -124,6 +128,10 @@ func SelectOptions(c *gin.Context) {
 }
 
 func Search(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
+	c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length")
+	c.Header("Access-Control-Expose-Headers", "Content-Length")
 	escapedName := c.Query("q")
 	name, err := url.QueryUnescape(escapedName)
 	if err != nil {
@@ -185,6 +193,10 @@ func Search(c *gin.Context) {
 }
 
 func UpdateComment(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
+	c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length")
+	c.Header("Access-Control-Expose-Headers", "Content-Length")
 	id := c.Param("id")
 
 	var update struct {
