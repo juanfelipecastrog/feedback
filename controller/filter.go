@@ -7,6 +7,7 @@ import (
 
 func filterByDiscipline(feedbacks []model.Feedbacks, discipline string) []model.Feedbacks {
 	var filtered []model.Feedbacks
+	discipline = strings.ReplaceAll(discipline, "+", " ")
 	for _, f := range feedbacks {
 		if strings.ToLower(f.Discipline) == strings.ToLower(discipline) {
 			filtered = append(filtered, f)
@@ -17,6 +18,7 @@ func filterByDiscipline(feedbacks []model.Feedbacks, discipline string) []model.
 
 func filterByPeriod(feedbacks []model.Feedbacks, period string) []model.Feedbacks {
 	var filtered []model.Feedbacks
+	period = strings.ReplaceAll(period, "+", " ")
 	for _, f := range feedbacks {
 		if strings.EqualFold(strings.ReplaceAll(f.Period, " ", ""), strings.ReplaceAll(period, " ", "")) {
 			filtered = append(filtered, f)
