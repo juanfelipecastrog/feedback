@@ -88,9 +88,17 @@ func StatusSummary(c *gin.Context) {
 	c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 	c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length")
 	c.Header("Access-Control-Expose-Headers", "Content-Length")
+
+	// 1. Parse the query parameters
+	discipline := strings.ToLower(c.Query("discipline"))
+	period := strings.ToLower(c.Query("period"))
+
+	// 2. Filter the data based on the provided discipline and period
+	filteredFeedbacks := filterFeedbacks(data.Feedbacks, discipline, period)
+
 	statusCounts := make(map[string]int)
 
-	for _, f := range data.Feedbacks {
+	for _, f := range filteredFeedbacks {
 		statusCounts[f.Status]++
 	}
 
@@ -112,7 +120,7 @@ func StatusSummary(c *gin.Context) {
 		return order[summary[i]["status"].(string)] < order[summary[j]["status"].(string)]
 	})
 
-	totalFeedbacks := len(data.Feedbacks)
+	totalFeedbacks := len(filteredFeedbacks)
 
 	response := map[string]interface{}{
 		"summary": summary,

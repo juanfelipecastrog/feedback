@@ -51,3 +51,21 @@ func paginateFeedbacks(feedbacks []model.Feedbacks, limit, offset int) []model.F
 
 	return feedbacks[startIndex:endIndex]
 }
+
+func filterFeedbacks(feedbacks []model.Feedbacks, discipline, period string) []model.Feedbacks {
+	filteredFeedbacks := make([]model.Feedbacks, 0)
+	for _, f := range feedbacks {
+		if discipline != "" && strings.ToLower(f.Discipline) != discipline {
+			continue
+		}
+		if period != "" {
+			providedPeriod := strings.ReplaceAll(strings.ToLower(period), " ", "")
+			feedbackPeriod := strings.ReplaceAll(strings.ToLower(f.Period), " ", "")
+			if providedPeriod != feedbackPeriod {
+				continue
+			}
+		}
+		filteredFeedbacks = append(filteredFeedbacks, f)
+	}
+	return filteredFeedbacks
+}
