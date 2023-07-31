@@ -65,7 +65,14 @@ func getRandomPeriod() string {
 }
 
 func getRandomDiscipline() string {
-	disciplines := []string{"Development", "AM", "Testing", "Creative", "Facilities"}
+	disciplines := []string{
+		"Analysis",
+		"Application Management",
+		"Business Platform",
+		"Development",
+		"Data",
+		"Project Delivery Management",
+		"Testing"}
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	return disciplines[r.Intn(len(disciplines))]
 }
